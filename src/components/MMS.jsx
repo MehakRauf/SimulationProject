@@ -18,7 +18,7 @@ const MMS = () => {
             lamb = 1 / parseFloat(meanInterarrival);
         }
         
-        if (serviceType === 'Exponential' || serviceType === 'Poisson') {
+        if (serviceType === 'Exponential' ) {
             meu = 1 / parseFloat(meanService);
         }
 
@@ -107,7 +107,6 @@ const MMS = () => {
                         onChange={(e) => setServiceType(e.target.value)}
                     >
                         <option value="Exponential">Exponential</option>
-                        <option value="Poisson">Poisson</option>
                     </select>
                     <input
                         type="number"

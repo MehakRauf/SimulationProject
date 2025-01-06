@@ -22,11 +22,10 @@ const MM1 = () => {
             lam = 1 / parseFloat(meanInterarrival);
         }
         
-        if (serviceType === 'Exponential' || serviceType === 'Poisson') {
+        if (serviceType === 'Exponential' ) {
             meu = 1 / parseFloat(meanService);
         }
         
-
         // Utilization calculation
         const rho = lam / meu; // Utilization rate (rho)
 
@@ -82,7 +81,6 @@ const MM1 = () => {
                     onChange={(e) => setServiceType(e.target.value)}
                 >
                     <option value="Exponential">Exponential</option>
-                    <option value="Poisson">Poisson</option>
                 </select>
                     <input 
                         type="number" 
