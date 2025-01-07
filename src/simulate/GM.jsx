@@ -9,8 +9,7 @@ export default function Simulation() {
     <h1>Select </h1>
     <div className="model-buttons">
         <button className='model-button' onClick={() => navigate('/GMS_with')}>With Priority</button>
-        <button className='model-button' onClick={() => navigate('/GMS_without')}>Without Priority</button>
-        
+        <button className='model-button' onClick={() => navigate('/GMS_without')}>Without Priority</button>       
     </div>
 </div>
   )

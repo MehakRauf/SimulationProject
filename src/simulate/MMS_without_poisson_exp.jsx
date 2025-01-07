@@ -4,7 +4,6 @@ import Graph from "./Graph";
 function MultiServerSimulation() {
   const [lambda, setLambda] = useState(2.96);
   const [mu, setMu] = useState(2.58);
-  const [num, setNum] = useState(5);
   const [server, setServer] = useState(2);
   const [results, setResults] = useState(null);
 
@@ -23,16 +22,21 @@ function MultiServerSimulation() {
     const ranges = [];
     let previousCp = 0;
     const cpArray = [];
-    for (let i = 0; i < num; i++) {
-      const cp = poissonCumulative(lambda, i);
-      if (cp >= 1) {
-        break;
+
+    let i = 0;
+    let cp = 0; // Initial cumulative probability value
+    while (true) {
+      const nextCp = poissonCumulative(lambda, i);
+      console.log(nextCp, cp);
+      if (Math.abs(nextCp - cp) < 0.0000001) {
+        break; // Stop if the cumulative probability change is very small
       }
-      ranges.push({ lower: previousCp, upper: cp, minVal: i });
-      cpArray.push(cp);
-      previousCp = cp;
+      ranges.push({ lower: cp, upper: nextCp, minVal: i });
+      cpArray.push(nextCp);
+      cp = nextCp; // Update the cumulative probability
+      i++;
     }
-    console.log(cpArray)
+console.log(cpArray.length)
     const serviceTimes = Array.from({ length: cpArray.length }, () => {
       let service;
       do {
@@ -41,8 +45,6 @@ function MultiServerSimulation() {
       } while (service < 1);
       return service;
     });
-
-  
 
     const interArrival = [0];
     for (let i = 1; i < cpArray.length; i++) {
@@ -56,16 +58,16 @@ function MultiServerSimulation() {
     let arrival = 0;
     const arrivalTimes = [];
     const iaFinalArray = [];
-    
-    interArrival.slice(0, cpArray.length ).forEach((ia, i) => {
-    // interArrival.forEach((ia) => {
+
+    interArrival.slice(0, cpArray.length).forEach((ia, i) => {
+      // interArrival.forEach((ia) => {
       let iaFinal = -1;
       ranges.forEach((range) => {
         if (range.lower <= ia && ia <= range.upper) {
           iaFinal = range.minVal;
         }
       });
-      
+
       arrival += iaFinal;
       arrivalTimes.push(arrival);
       iaFinalArray.push(iaFinal); // Ensure iaFinal is properly set here
@@ -191,12 +193,6 @@ function MultiServerSimulation() {
             type="number"
             value={mu}
             onChange={(e) => setMu(parseFloat(e.target.value))}
-          />
-          <label>Number of Patients: </label>
-          <input
-            type="number"
-            value={num}
-            onChange={(e) => setNum(parseInt(e.target.value))}
           />
           <label>Number of Servers: </label>
           <input

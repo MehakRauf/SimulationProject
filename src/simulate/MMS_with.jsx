@@ -8,49 +8,12 @@ function MMSimulate() {
 
   const handleSubmit = () => {
     console.log(`Navigating to /MM_exp_uni`); // Added console.log for debugging
-
-    if (arrivalDistribution === 'Poisson' && serviceDistribution === 'Exponential') {
-      navigate('/MMS_with_poisson_exp'); // Navigate when conditions are met
-    } 
-    if (arrivalDistribution === 'Poisson' && serviceDistribution === 'Poisson') {
-      navigate('/MMS_with_poisson_poisson'); // Navigate when conditions are met
-    } 
-    if (arrivalDistribution === 'Exponential' && serviceDistribution === 'Poisson') {
-      navigate('/MMS_with_exp_poisson'); // Navigate when conditions are met
-    } 
-    if (arrivalDistribution === 'Exponential' && serviceDistribution === 'Exponential') {
-      navigate('/MMS_with_exp_exp'); // Navigate when conditions are met
-    } 
-    else {
-      console.log(`Selected Arrival: ${arrivalDistribution}, Service: ${serviceDistribution}`); // Log selected values if conditions don't match
-    }
+    navigate('/MMS_with_poisson_exp'); // Navigate when conditions are met
   };
 
   return (
     <div>
       <h1>M/M/S Simulation</h1>
-      <div>
-        <label>Arrival Distribution: </label>
-        <select 
-          value={arrivalDistribution} 
-          onChange={(e) => setArrivalDistribution(e.target.value)}
-        >
-          <option value="Poisson">Poisson</option>
-          <option value="Exponential">Exponential</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Service Distribution: </label>
-        <select 
-          value={serviceDistribution} 
-          onChange={(e) => setServiceDistribution(e.target.value)}
-        >
-          {/* <option value="Poisson">Poisson</option> */}
-          <option value="Exponential">Exponential</option>
-        </select>
-      </div>
-
       <button onClick={handleSubmit}>Start Simulation</button>
     </div>
   );

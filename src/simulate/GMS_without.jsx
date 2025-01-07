@@ -11,18 +11,10 @@ function GMSimulate() {
     if (arrivalDistribution === 'Normal' && serviceDistribution === 'Exponential') {
       navigate('/GM_without_norm_exp'); // Navigate when conditions are met
     } 
-    if (arrivalDistribution === 'Normal' && serviceDistribution === 'Poisson') {
-      navigate('/GM_without_norm_poisson'); // Navigate when conditions are met
-    } 
     if (arrivalDistribution === 'Uniform' && serviceDistribution === 'Exponential') {
       navigate('/GM_without_uni_exp'); // Navigate when conditions are met
     } 
-    if (arrivalDistribution === 'Uniform' && serviceDistribution === 'Poisson') {
-      navigate('/GM_without_uni_poisson'); // Navigate when conditions are met
-    } 
-    else {
-      console.log(`Selected Arrival: ${arrivalDistribution}, Service: ${serviceDistribution}`); // Log selected values if conditions don't match
-    }
+    
   };
 
   return (
@@ -38,19 +30,7 @@ function GMSimulate() {
           <option value="Uniform">Uniform</option>
         </select>
       </div>
-
-      <div>
-        <label>Service Distribution: </label>
-        <select 
-          value={serviceDistribution} 
-          onChange={(e) => setServiceDistribution(e.target.value)}
-        >
-          <option value="Exponential">Exponential</option>
-          {/* <option value="Poisson">Poisson</option> */}
-        </select>
-      </div>
-
-      <button onClick={handleSubmit}>Start Simulation</button>
+  <button onClick={handleSubmit}>Start Simulation</button>
     </div>
   );
 }

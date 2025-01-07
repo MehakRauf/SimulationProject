@@ -5,7 +5,6 @@ function MultiServerSimulation() {
   const [lambda, setLambda] = useState();
   const [min, setMin] = useState();
   const [max, setMax] = useState();
-  const [num, setNum] = useState(5);
   const [serverCount, setServerCount] = useState(2);
   const [a, setA] = useState(1);
   const [b, setB] = useState(3);
@@ -40,19 +39,23 @@ function MultiServerSimulation() {
   };
 
   const runSimulation = () => {
-    
     const ranges = [];
-    let previousCp = 0;
     const cpArray = [];
-    for (let i = 0; i < num; i++) {
-      const cp = ExpCumulative(lambda, i);
-      if(cp>1){
-        break;
+
+    let i = 0;
+    let cp = 0; // Initial cumulative probability value
+    while (true) {
+      const nextCp = ExpCumulative(lambda, i);
+      console.log(nextCp, cp);
+      if (nextCp >=1 ) {
+        break; // Stop if the cumulative probability change is very small
       }
-      ranges.push({ lower: previousCp, upper: cp, minVal: i });
-      cpArray.push(cp);
-      previousCp = cp;
+      ranges.push({ lower: cp, upper: nextCp, minVal: i });
+      cpArray.push(nextCp);
+      cp = nextCp; // Update the cumulative probability
+      i++;
     }
+
     const priorities = generatePriority(A, Z, C, M, a, b, cpArray.length);
     const serviceTimes = Array.from({ length: cpArray.length }, () => {
       let service;
@@ -76,7 +79,7 @@ function MultiServerSimulation() {
     const arrivalTimes = [0];
     const iaFinalArray = [0];
 
-    interArrival.slice(0, cpArray.length ).forEach((ia) => {
+    interArrival.slice(0, cpArray.length).forEach((ia) => {
       let iaFinal = -1;
       ranges.forEach((range) => {
         if (range.lower <= ia && ia < range.upper) {
@@ -266,12 +269,6 @@ function MultiServerSimulation() {
           type="number"
           value={max}
           onChange={(e) => setMax(parseFloat(e.target.value))}
-        />
-        <label>Number of Patients: </label>
-        <input
-          type="number"
-          value={num}
-          onChange={(e) => setNum(parseInt(e.target.value))}
         />
         <label>Number of Servers: </label>
         <input

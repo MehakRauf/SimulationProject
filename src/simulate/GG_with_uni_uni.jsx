@@ -44,12 +44,24 @@ function MultiServerSimulation() {
     const ranges = [];
     let previousCp = 0;
     const cpArray = [];
-    for (let i = 0; i < num; i++) {
-      const cp = UniCumulative(a, b, i);
-      ranges.push({ lower: previousCp, upper: cp, minVal: i });
-      cpArray.push(cp);
-      previousCp = cp;
-    }
+    // for (let i = 0; i < num; i++) {
+    //   const cp = UniCumulative(a, b, i);
+    //   ranges.push({ lower: previousCp, upper: cp, minVal: i });
+    //   cpArray.push(cp);
+    //   previousCp = cp;
+    // }
+
+    let i = 0; // Start from the first patient
+
+  // Dynamically generate patients until cumulative probability reaches or exceeds 1
+  while (true) {
+    const cp =  UniCumulative(a, b, i); // CDF for patient `i`
+    if (cp >= 1) break; // Stop if cumulative probability reaches/exceeds 1
+    ranges.push({ lower: previousCp, upper: cp, minVal: i });
+    cpArray.push(cp);
+    previousCp = cp;
+    i++;
+  }
 
     const priorities = generatePriority(A, Z, C, M, a, b, cpArray.length);
     const serviceTimes = Array.from({ length: cpArray.length }, () => {
@@ -259,12 +271,12 @@ function MultiServerSimulation() {
           value={max}
           onChange={(e) => setMax(parseFloat(e.target.value))}
         />
-        <label>Number of Patients: </label>
+        {/* <label>Number of Patients: </label>
         <input
           type="number"
           value={num}
           onChange={(e) => setNum(parseInt(e.target.value))}
-        />
+        /> */}
         <label>Number of Servers: </label>
         <input
           type="number"

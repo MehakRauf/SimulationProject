@@ -4,7 +4,6 @@ import Graph from './Graph';
 function MultiServerSimulation() {
   const [lambda, setLambda] = useState(2.58);
   const [sd, setSd] = useState(2.58);
-  const [num, setNum] = useState(5);
   const [serverCount, setServerCount] = useState(2);
   const [a, setA] = useState(1);
   const [b, setB] = useState(3);
@@ -21,16 +20,16 @@ function MultiServerSimulation() {
       t *
       Math.exp(
         -z * z -
-          1.26551223 +
-          1.00002368 * t +
-          0.37409196 * t * t +
-          0.09678418 * t * t * t -
-          0.18628806 * t * t * t * t +
-          0.27886807 * t * t * t * t * t -
-          1.13520398 * t * t * t * t * t * t +
-          1.48851587 * t * t * t * t * t * t * t -
-          0.82215223 * t * t * t * t * t * t * t * t +
-          0.17087277 * t * t * t * t * t * t * t * t * t
+        1.26551223 +
+        1.00002368 * t +
+        0.37409196 * t * t +
+        0.09678418 * t * t * t -
+        0.18628806 * t * t * t * t +
+        0.27886807 * t * t * t * t * t -
+        1.13520398 * t * t * t * t * t * t +
+        1.48851587 * t * t * t * t * t * t * t -
+        0.82215223 * t * t * t * t * t * t * t * t +
+        0.17087277 * t * t * t * t * t * t * t * t * t
       );
     return z >= 0 ? 1 - tau : tau - 1;
   };
@@ -46,7 +45,7 @@ function MultiServerSimulation() {
     return cumulativeProb;
   };
 
-  const generatePriority = (A, Z, C, M, a, b,n) => {
+  const generatePriority = (A, Z, C, M, a, b, n) => {
     const generatedPriorities = [];
     for (let i = 0; i < n; i++) {
       let randomValue = (A * Z + C) % M;
@@ -62,14 +61,21 @@ function MultiServerSimulation() {
     const ranges = [];
     let previousCp = 0;
     const cpArray = [];
-    for (let i = 0; i < num; i++) {
-      const cp = normal_cumulative(i);
-      if (cp >= 1) {
-        break;
+
+    let i = 0;
+    let cp = 0; // Initial cumulative probability value
+    while (cp < 1) {
+      const nextCp = normal_cumulative(i);
+
+      // Stop the loop if cumulative probability becomes exactly 1
+      if (nextCp >=1 ) {
+        break; // Stop if the cumulative probability change is very small
       }
-      ranges.push({ lower: previousCp, upper: cp, minVal: i });
-      cpArray.push(cp);
-      previousCp = cp;
+
+      ranges.push({ lower: cp, upper: nextCp, minVal: i });
+      cpArray.push(nextCp);
+      cp = nextCp;
+      i++;
     }
 
     const priorities = generatePriority(A, Z, C, M, a, b);
@@ -82,7 +88,7 @@ function MultiServerSimulation() {
       return service;
     });
 
-    
+
     const interArrival = [0];
     for (let i = 1; i < cpArray.length; i++) {
       let ia;
@@ -96,7 +102,7 @@ function MultiServerSimulation() {
     const arrivalTimes = [];
     const iaFinalArray = [];
 
-    interArrival.slice(0, cpArray.length ).forEach((ia, i) => {
+    interArrival.slice(0, cpArray.length).forEach((ia, i) => {
       let iaFinal = -1;
       ranges.forEach((range) => {
         if (range.lower <= ia && ia < range.upper) {
@@ -281,12 +287,6 @@ function MultiServerSimulation() {
           type="number"
           value={sd}
           onChange={(e) => setSd(parseFloat(e.target.value))}
-        />
-        <label>Number of Patients: </label>
-        <input
-          type="number"
-          value={num}
-          onChange={(e) => setNum(parseInt(e.target.value))}
         />
         <label>Number of Servers: </label>
         <input

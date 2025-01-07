@@ -31,15 +31,29 @@ function MultiServerSimulation() {
     const ranges = [];
     let previousCp = 0;
     const cpArray = [];
-    for (let i = 0; i < num; i++) {
-      const cp = UniCumulative(a, b, i);
-      if (cp > 1) {
-        break;
+    // for (let i = 0; i < num; i++) {
+    //   const cp = UniCumulative(a, b, i);
+    //   if (cp > 1) {
+    //     break;
+    //   }
+    //   ranges.push({ lower: previousCp, upper: cp, minVal: i });
+    //   cpArray.push(cp);
+    //   previousCp = cp;
+    // }
+    let i = 0;
+    let cp = 0; // Initial cumulative probability value
+    while (true) {
+      const nextCp = UniCumulative(a, b, i); // CDF for patient `i`
+      console.log(nextCp, cp);
+      if (cp == 1) {
+        break; // Stop if the cumulative probability change is very small
       }
-      ranges.push({ lower: previousCp, upper: cp, minVal: i });
-      cpArray.push(cp);
-      previousCp = cp;
+      ranges.push({ lower: cp, upper: nextCp, minVal: i });
+      cpArray.push(nextCp);
+      cp = nextCp; // Update the cumulative probability
+      i++;
     }
+
     const serviceTimes = Array.from({ length: cpArray.length }, () => {
       let service;
       do {
@@ -207,12 +221,12 @@ function MultiServerSimulation() {
           value={sd}
           onChange={(e) => setSd(parseFloat(e.target.value))}
         />
-        <label>Number of Patients: </label>
+        {/* <label>Number of Patients: </label>
         <input
           type="number"
           value={num}
           onChange={(e) => setNum(parseInt(e.target.value))}
-        />
+        /> */}
         <label>Number of Servers: </label>
         <input
           type="number"

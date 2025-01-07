@@ -4,7 +4,6 @@ import Graph from "./Graph"; // adjust the path if necessary
 function MultiServerSimulation() {
   const [lambda, setLambda] = useState(2.96);
   const [mu, setMu] = useState(2.58);
-  const [num, setNum] = useState(5);
   const [serverCount, setServerCount] = useState(2);
   const [a, setA] = useState(1);
   const [b, setB] = useState(3);
@@ -42,14 +41,19 @@ function MultiServerSimulation() {
     const ranges = [];
     let previousCp = 0;
     const cpArray = [];
-    for (let i = 0; i < num; i++) {
-      const cp = poissonCumulative(lambda, i);
-      if (cp >= 1) {
-        break;
+   
+    let i = 0;
+    let cp = 0; // Initial cumulative probability value
+    while (true) {
+      const nextCp = poissonCumulative(lambda, i);
+      console.log(nextCp, cp);
+      if (Math.abs(nextCp - cp) < 0.0000001) {
+        break; // Stop if the cumulative probability change is very small
       }
-      ranges.push({ lower: previousCp, upper: cp, minVal: i });
-      cpArray.push(cp);
-      previousCp = cp;
+      ranges.push({ lower: cp, upper: nextCp, minVal: i });
+      cpArray.push(nextCp);
+      cp = nextCp; // Update the cumulative probability
+      i++;
     }
 
     const priorities = generatePriority(A, Z, C, M, a, b);
@@ -263,12 +267,7 @@ function MultiServerSimulation() {
             value={mu}
             onChange={(e) => setMu(parseFloat(e.target.value))}
           />
-          <label>Number of Patients: </label>
-          <input
-            type="number"
-            value={num}
-            onChange={(e) => setNum(parseInt(e.target.value))}
-          />
+
           <label>Number of Servers: </label>
           <input
             type="number"

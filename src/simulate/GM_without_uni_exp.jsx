@@ -5,7 +5,6 @@ function MultiServerSimulation() {
   const [a, seta] = useState(2.96);
   const [b, setb] = useState(2.96);
   const [lambda, setLambda] = useState(2.58);
-  const [num, setNum] = useState(5);
   const [server, setServer] = useState(2);
   const [results, setResults] = useState(null);
 
@@ -29,11 +28,20 @@ function MultiServerSimulation() {
     const ranges = [];
     let previousCp = 0;
     const cpArray = [];
-    for (let i = 0; i < num; i++) {
-      const cp = UniCumulative(a, b, i);
-      ranges.push({ lower: previousCp, upper: cp, minVal: i });
-      cpArray.push(cp);
-      previousCp = cp;
+    let i = 0;
+    let cp = 0; // Initial cumulative probability value
+    while (cp < 1) {
+      const nextCp = UniCumulative(a, b, i);
+
+      // Stop the loop if cumulative probability becomes exactly 1
+      if (nextCp >= 1) {
+        break; // Stop if the cumulative probability change is very small
+      }
+
+      ranges.push({ lower: cp, upper: nextCp, minVal: i });
+      cpArray.push(nextCp);
+      cp = nextCp;
+      i++;
     }
 
     const serviceTimes = Array.from({ length: cpArray.length }, () => {
@@ -198,12 +206,7 @@ function MultiServerSimulation() {
           onChange={(e) => setLambda(parseFloat(e.target.value))}
         />
 
-        <label>Number of Patients: </label>
-        <input
-          type="number"
-          value={num}
-          onChange={(e) => setNum(parseInt(e.target.value))}
-        />
+
         <label>Number of Servers: </label>
         <input
           type="number"
